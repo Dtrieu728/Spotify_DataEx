@@ -35,7 +35,6 @@ def get_top_artists_for_user():
 
     result = []
     for artist in top_artists['items']:
-        # Optional: fetch full artist for popularity
         cursor.execute("""
             INSERT INTO top_artists VALUES (?, ?, datetime('now'))
         """, (user['id'], artist['name']))
@@ -46,5 +45,42 @@ def get_top_artists_for_user():
 
     conn.commit()
     conn.close()
+
+    return result
+
+def get_top_songs_for_user():
+    user = sp.current_user()
+    top_songs = sp.current_user_top_tracks(limit=10)
+    
+    # Connect to DB
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor() 
+    
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS top_songs (
+        user_id TEXT,
+        song_name TEXT,
+        artist_name TEXT,
+        fetched_at TEXT,
+        UNIQUE(user_id, song_name, artist_name)
+    )
+    """)
+
+    result = []
+    for track in top_songs['items']:
+        artist_names = ", ".join([a['name'] for a in track['artists']])
+        
+        cursor.execute("""
+            INSERT OR IGNORE INTO top_songs (user_id, song_name, artist_name, fetched_at)
+            VALUES (?, ?, ?, datetime('now'))
+        """, (user['id'], track['name'], artist_names))
+
+        result.append({
+            "name": track['name'],
+            "artist": artist_names
+        })
+        
+    conn.commit()
+    conn.close() 
 
     return result
