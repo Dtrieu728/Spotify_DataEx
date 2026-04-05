@@ -1,19 +1,21 @@
 import { Link } from 'react-router-dom';
 import './NavigationBar.css'; 
-import * as ROUTES from "../../constants/routes";
+import { HOME, PROFILE, PLAYLISTS } from "../../Constants/routes";
+
+
 function NavigationBar() {
   return (
     <header className='NavigationBar'>
       <nav>
         <ul className='nav-list'>
           <li className='nav-item'>
-            <Link to={ROUTES.HOME}>Home</Link>
+            <Link to={HOME}>Home</Link>
           </li>
           <li className='nav-item'>
-            <Link to={ROUTES.SIGN_UP}>Profile</Link>
+            <Link to={PROFILE }>Profile</Link>
           </li>
           <li className='nav-item'>
-            <Link to={ROUTES.PLAY_LIST}>PlayList</Link>
+            <Link to={PLAYLISTS}>PlayList</Link>
           </li>
         </ul>
       </nav>
