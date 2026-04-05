@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import './NavigationBar.css'; 
-import { HOME, PROFILE, PLAYLISTS } from "../../Constants/routes";
+import { HOME, INSIGHTS, PROFILE, USERPAGE, PLAYLISTS } from "../../Constants/routes";
 
 
 function NavigationBar() {
@@ -15,7 +15,13 @@ function NavigationBar() {
             <Link to={PROFILE }>Profile</Link>
           </li>
           <li className='nav-item'>
-            <Link to={PLAYLISTS}>PlayList</Link>
+            <Link to={USERPAGE}>Data</Link>
+          </li>
+          <li className='nav-item'>
+            <Link to={PLAYLISTS}>Playlists</Link>
+          </li>
+          <li className='nav-item'>
+            <Link to={INSIGHTS}>Insights</Link>
           </li>
         </ul>
       </nav>
