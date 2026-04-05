@@ -1,25 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  const [topSongs, setTopSongs] = useState([]);
+  const [topArtists, setTopArtists] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:5000/api/top-songs")
+      .then(res => res.json())
+      .then(data => setTopSongs(data));
+
+    fetch("http://127.0.0.1:5000/api/top-artists")
+      .then(res => res.json())
+      .then(data => setTopArtists(data));
+  }, []);
+
+ return (
+  <div style={{ padding: "40px", fontFamily: "Arial" }}>
+    <h1>Spotify Insights</h1>
+
+    <div style={{ display: "flex", gap: "50px" }}>
+      
+      <div>
+        <h2>Top Songs</h2>
+        {topSongs.map((song, index) => (
+          <p key={index}>
+            #{index + 1} {song.name} — {song.artist}
+          </p>
+        ))}
+      </div>
+
+      <div>
+        <h2>Top Artists</h2>
+        {topArtists.map((artist, index) => (
+          <p key={index}>
+            #{index + 1} {artist.name}
+          </p>
+        ))}
+      </div>
+
     </div>
-  );
+  </div>
+);
 }
 
 export default App;
