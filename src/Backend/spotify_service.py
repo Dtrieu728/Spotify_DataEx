@@ -22,7 +22,7 @@ DB_PATH = "Database/spotify.db"
 
 def get_top_artists_for_user():
     user = sp.current_user()
-    top_artists = sp.current_user_top_artists(limit=10)
+    top_artists = sp.current_user_top_artists(limit=20)
 
     # Connect to DB
     conn = sqlite3.connect(DB_PATH)
@@ -53,7 +53,7 @@ def get_top_artists_for_user():
 
 def get_top_songs_for_user():
     user = sp.current_user()
-    top_songs = sp.current_user_top_tracks(limit=10)
+    top_songs = sp.current_user_top_tracks(limit=20)
     
     # Connect to DB
     conn = sqlite3.connect(DB_PATH)
@@ -91,7 +91,7 @@ def get_top_songs_for_user():
 
 def get_top_albums_for_user():
     user = sp.current_user()
-    top_tracks = sp.current_user_top_tracks(limit=10)
+    top_tracks = sp.current_user_top_tracks(limit=20)
 
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()

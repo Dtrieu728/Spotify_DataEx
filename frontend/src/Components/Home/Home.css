@@ -48,3 +48,19 @@ body {
 .item:last-child {
   border-bottom: none;
 }
+
+.toggle-btn {
+  margin-top: 15px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  background-color: #1db954;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.toggle-btn:hover {
+  background-color: #1ed760;
+}
