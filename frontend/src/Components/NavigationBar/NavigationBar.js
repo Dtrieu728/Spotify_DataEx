@@ -17,12 +17,12 @@ function NavigationBar() {
           <li className='nav-item'>
             <Link to={USERPAGE}>Data</Link>
           </li>
-          <li className='nav-item'>
+          {/* <li className='nav-item'>
             <Link to={PLAYLISTS}>Playlists</Link>
           </li>
           <li className='nav-item'>
             <Link to={INSIGHTS}>Insights</Link>
-          </li>
+          </li> */}
         </ul>
       </nav>
     </header>
