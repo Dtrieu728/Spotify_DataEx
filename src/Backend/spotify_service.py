@@ -4,7 +4,10 @@ import spotipy
 import sqlite3
 from spotipy.oauth2 import SpotifyOAuth
 
-load_dotenv()
+load_dotenv(override=True)
+
+print("CLIENT_ID:", os.getenv("SPOTIPY_CLIENT_ID"))
+print("CLIENT_SECRET:", os.getenv("SPOTIPY_CLIENT_SECRET"))
 
 sp = spotipy.Spotify(
     auth_manager=SpotifyOAuth(

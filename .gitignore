@@ -2,3 +2,4 @@ scripts/
 myenv/
 .env
 .cache
+__pycache__/
