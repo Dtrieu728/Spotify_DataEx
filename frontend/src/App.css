@@ -1,50 +1,16 @@
-/* App.css */
-
 body {
   margin: 0;
   font-family: "Helvetica Neue", Arial, sans-serif;
-  background: linear-gradient(180deg, #121212, #000000);
+  background: black;
   color: white;
+
 }
 
 .app {
   padding: 40px;
-}
-
-.title {
-  font-size: 2.5rem;
-  margin-bottom: 30px;
-}
-
-.container {
-  display: flex;
-  gap: 40px;
-  flex-wrap: wrap;
-}
-
-.card {
-  background: #181818;
-  padding: 20px;
-  border-radius: 16px;
-  width: 300px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  background: #0e9c31;
-}
-
-.card h2 {
-  margin-bottom: 15px;
-}
-
-.item {
-  padding: 8px 0;
-  border-bottom: 1px solid #333;
-}
-
-.item:last-child {
-  border-bottom: none;
+  min-height: 100vh;       /* ensures it fills the viewport */
+  background-color: #000;  /* solid black */
+  color: white;            /* default text color */
+  display: flex;           /* optional: center content vertically */
+  flex-direction: column;
 }

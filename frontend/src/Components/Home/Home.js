@@ -1,8 +1,10 @@
- 
- const Home = ({ topSongs, topArtists }) => {
+ import "./Home.css";
+ const Home = ({ topSongs = [], topArtists = [], topAlbums = [] }) => {
     return (
       <>
-        <h1 className="title">Spotify Insights</h1>
+        <h1 className="title" align="center">
+          Spotify Insights
+        </h1>
         <div className="container">
           
           <div className="card">
@@ -19,6 +21,15 @@
             {topArtists.map((artist, index) => (
               <div className="item" key={index}>
                 #{index + 1} {artist.name}
+              </div>
+            ))}
+          </div>
+
+          <div className="card">
+            <h2>Top Albums</h2>
+            {topAlbums.map((album, index) => (
+              <div className="item" key={index}>
+                #{index + 1} {album.name} — {album.artist}
               </div>
             ))}
           </div>

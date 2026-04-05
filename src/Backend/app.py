@@ -13,10 +13,11 @@ DB_PATH = "Database/spotify.db"
 def update_spotify_data():
     print("Updating Spotify data...")
 
-    from spotify_service import get_top_songs_for_user, get_top_artists_for_user
+    from spotify_service import get_top_songs_for_user, get_top_artists_for_user, get_top_albums_for_user
 
     get_top_songs_for_user()
     get_top_artists_for_user()
+    get_top_albums_for_user()
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(update_spotify_data, 'interval', minutes=30)
@@ -40,8 +41,14 @@ def top_artists():
     conn.close()
     return jsonify(artists)
 
-
-
+@app.route("/api/top-albums")
+def top_albums():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT album_name, artist_name FROM top_albums ORDER BY fetched_at DESC LIMIT 10")
+    albums = [{"name": row[0], "artist": row[1]} for row in cursor.fetchall()]
+    conn.close()
+    return jsonify(albums)
 
 if __name__ == "__main__":
     update_spotify_data()

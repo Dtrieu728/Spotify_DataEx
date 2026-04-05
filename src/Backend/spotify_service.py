@@ -87,3 +87,40 @@ def get_top_songs_for_user():
     conn.close() 
 
     return result
+
+
+def get_top_albums_for_user():
+    user = sp.current_user()
+    top_tracks = sp.current_user_top_tracks(limit=10)
+
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS top_albums (
+            user_id TEXT,
+            album_name TEXT,
+            artist_name TEXT,
+            fetched_at TEXT,
+            UNIQUE(user_id, album_name, artist_name)
+        )
+        """)
+
+        result = []
+        for track in top_tracks['items']:
+            album = track['album']
+            artist_names = ", ".join([a['name'] for a in album['artists']])
+
+            cursor.execute("""
+                INSERT OR IGNORE INTO top_albums (user_id, album_name, artist_name, fetched_at)
+                VALUES (?, ?, ?, datetime('now'))
+            """, (user['id'], album['name'], artist_names))
+
+            result.append({
+                "name": album['name'],
+                "artist": artist_names
+            })
+            
+    conn.commit()
+    conn.close()
+
+    return result
