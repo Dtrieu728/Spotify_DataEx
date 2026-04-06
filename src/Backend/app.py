@@ -39,7 +39,7 @@ def update_spotify_data():
     try:
         get_song_data(sp)
     except Exception as e:
-        print("Audio features update failed:", e)
+        print("Song metadata update failed:", e)
         
 
 scheduler = BackgroundScheduler()
@@ -78,8 +78,7 @@ def song_data():
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT song_name, artist_name,
-               danceability, energy, valence, tempo
+        SELECT song_name, artist_name, album_name, release_date, duration_ms
         FROM top_songs
         ORDER BY fetched_at DESC
         LIMIT 20
@@ -89,16 +88,16 @@ def song_data():
         {
             "name": row[0],
             "artist": row[1],
-            "danceability": row[2],
-            "energy": row[3],
-            "valence": row[4],
-            "tempo": row[5]
+            "album": row[2],
+            "release_date": row[3],
+            "duration_ms": row[4]
         }
         for row in cursor.fetchall()
     ]
 
     conn.close()
     return jsonify(songs)
+
 
 if __name__ == "__main__":
     scheduler.start()

@@ -35,10 +35,9 @@ def create_tables():
             user_id TEXT,
             song_name TEXT,
             artist_name TEXT,
-            danceability REAL,
-            energy REAL,
-            valence REAL,
-            tempo REAL,
+            album_name TEXT,
+            release_date TEXT, 
+            duration_ms INTEGER,
             fetched_at TEXT,
             UNIQUE(user_id, song_name, artist_name)
         )
@@ -124,50 +123,55 @@ def get_top_albums_for_user(sp, limit=20):
     return [{"name": t['album']['name'], "artist": ", ".join([a['name'] for a in t['album']['artists']])} for t in top_tracks]
 
 
-def get_song_data(sp, limit=20):    
+def get_song_data(sp, limit=20):
     user = sp.current_user()
     top_tracks = sp.current_user_top_tracks(limit=limit)['items']
-    track_ids = [t['id'] for t in top_tracks if t['id']]
-
-    # Fetch audio features safely
-    features = []
-    try:
-        for i in range(0, len(track_ids), 50):
-            batch = track_ids[i:i+50]
-            batch_features = sp.audio_features(batch)
-            features.extend(batch_features)
-    except Exception as e:
-        print("Error fetching audio features:", e)
-        features = [None]*len(track_ids)
 
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    for track, feat in zip(top_tracks, features):
+    # Make sure table exists
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS top_songs (
+            user_id TEXT,
+            song_name TEXT,
+            artist_name TEXT,
+            album_name TEXT,
+            release_date TEXT,
+            duration_ms INTEGER,
+            fetched_at TEXT,
+            UNIQUE(user_id, song_name, artist_name)
+        )
+    """)
+
+    results = []
+    for track in top_tracks:
         artist_names = ", ".join([a['name'] for a in track['artists']])
-        dance, energy, valence, tempo = (None, None, None, None)
-        if feat:
-            dance = feat['danceability']
-            energy = feat['energy']
-            valence = feat['valence']
-            tempo = feat['tempo']
+        album_name = track['album']['name']
+        release_date = track['album']['release_date']
+        duration_ms = track['duration_ms']
 
         cursor.execute("""
             INSERT OR REPLACE INTO top_songs
-            (user_id, song_name, artist_name, danceability, energy, valence, tempo, fetched_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
-        """, (user['id'], track['name'], artist_names, dance, energy, valence, tempo))
+            (user_id, song_name, artist_name, album_name, release_date, duration_ms, fetched_at)
+            VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
+        """, (
+            user['id'],
+            track['name'],
+            artist_names,
+            album_name,
+            release_date,
+            duration_ms
+        ))
+
+        results.append({
+            "name": track['name'],
+            "artist": artist_names,
+            "album": album_name,
+            "release_date": release_date,
+            "duration_ms": duration_ms
+        })
 
     conn.commit()
     conn.close()
-    return [
-        {
-            "name": track['name'],
-            "artist": ", ".join([a['name'] for a in track['artists']]),
-            "danceability": feat['danceability'] if feat else None,
-            "energy": feat['energy'] if feat else None,
-            "valence": feat['valence'] if feat else None,
-            "tempo": feat['tempo'] if feat else None
-        }
-        for track, feat in zip(top_tracks, features)
-    ]
+    return results
