@@ -7,13 +7,13 @@ function Callback() {
   useEffect(() => {
     async function getToken() {
       const code = new URLSearchParams(window.location.search).get("code");
-      const verifier = localStorage.getItem("verifier");
+      const verifier = localStorage.getItem("code_verifier");
 
       const body = new URLSearchParams({
-        client_id: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
+        client_id: process.env.REACT_APP_CLIENT_ID,
         grant_type: "authorization_code",
         code: code,
-        redirect_uri: import.meta.env.VITE_REDIRECT_URI,
+        redirect_uri: process.env.REACT_APP_REDIRECT_URI,
         code_verifier: verifier,
       });
 
@@ -31,7 +31,7 @@ function Callback() {
 
       const data = await response.json();
 
-      localStorage.setItem("token", data.access_token);
+      localStorage.setItem("spotify_token", data.access_token);
 
       navigate("/profile");
     }
