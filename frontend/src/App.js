@@ -17,7 +17,7 @@ function App() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const token = localStorage.getItem("spotify_token");
+        const token = localStorage.getItem("token");
 
         if (!token) {
           setLoading(false);
@@ -39,7 +39,7 @@ function App() {
 
         // Token expired / invalid
         if (songsRes.status === 401 || artistsRes.status === 401) {
-          localStorage.removeItem("spotify_token");
+          localStorage.removeItem("token");
           setLoading(false);
           return;
         }
