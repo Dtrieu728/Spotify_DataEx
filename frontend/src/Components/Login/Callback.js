@@ -19,6 +19,10 @@ function Callback() {
         code_verifier: verifier,
       });
 
+      console.log("CODE:", code);
+      console.log("VERIFIER:", verifier);
+      console.log("REDIRECT:", redirect_uri);
+
       const response = await fetch(
         "https://accounts.spotify.com/api/token",
         {
