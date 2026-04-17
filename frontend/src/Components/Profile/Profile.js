@@ -13,10 +13,11 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const Profile = () => {
-  const lastUpdated = localStorage.getItem("lastUpdated");
   const [songs, setSongs] = useState([]);
+  const [lastUpdated, setLastUpdated] = useState(
+    localStorage.getItem("lastUpdated")
+  );
 
-  // On mount: load from localStorage first
   useEffect(() => {
     const cached = localStorage.getItem("songData");
     if (cached) {
@@ -24,11 +25,27 @@ const Profile = () => {
     }
 
     async function fetchSongs() {
-      const res = await fetch("http://127.0.0.1:5000/api/song-data");
+      const token = localStorage.getItem("spotify_token");
+
+      if (!token) return;
+
+      const res = await fetch(
+        "https://api.spotify.com/v1/me/top/tracks?limit=20",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       const data = await res.json();
-      setSongs(data);
-      localStorage.setItem("songData", JSON.stringify(data)); // cache it
-      localStorage.setItem("lastUpdated", new Date().toISOString()); // update last updated time
+
+      setSongs(data.items || []);
+      localStorage.setItem("songData", JSON.stringify(data.items || []));
+
+      const now = new Date().toISOString();
+      localStorage.setItem("lastUpdated", now);
+      setLastUpdated(now);
     }
 
     fetchSongs();
@@ -47,27 +64,33 @@ const Profile = () => {
 
   return (
     <div>
-      <h1 className="title" align="center">Profile</h1>
+      <h1 className="title" align="center">
+        Profile
+      </h1>
+
       <p style={{ color: "white" }}>
-        Last updated: {lastUpdated ? new Date(lastUpdated).toLocaleString() : "Never"}
+        Last updated:{" "}
+        {lastUpdated ? new Date(lastUpdated).toLocaleString() : "Never"}
       </p>
 
       <div style={{ maxWidth: 800, margin: "0 auto" }}>
         <h2 style={{ color: "white" }}>Top Songs by Duration</h2>
+
         <Bar
           data={songsChartData}
           options={{
             responsive: true,
             plugins: {
               legend: { display: true },
-              tooltip: {
-                callbacks: {
-                  label: (context) => `${context.dataset.label}: ${context.raw} min`,
-                },
-              },
             },
             scales: {
-              y: { beginAtZero: true, title: { display: true, text: "Minutes" } },
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Minutes",
+                },
+              },
             },
           }}
         />
