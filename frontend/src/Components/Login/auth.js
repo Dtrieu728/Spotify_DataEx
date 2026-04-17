@@ -42,11 +42,11 @@ export async function login() {
 
     const params = new URLSearchParams({
         response_type: "code",
-        client_id,
+        client_id: client_id,
         scope: scope.join(" "),     
         code_challenge_method: "S256",
         code_challenge: challenge,
-        redirect_uri,
+        redirect_uri: redirect_uri,
     });
     window.location.href = `https://accounts.spotify.com/authorize?${params.toString()}`;
 }
