@@ -52,5 +52,5 @@ export async function login() {
 
 
     console.log("ENV CLIENT ID:", process.env.REACT_APP_CLIENT_ID);
-    console.log("ENV REDIRECT:", process.env.REACT_APP_REDIRECT_URI);
+    console.log("ENV REDIRECT:", redirect_uri);
 }
