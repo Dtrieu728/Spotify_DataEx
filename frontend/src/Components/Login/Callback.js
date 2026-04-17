@@ -30,6 +30,14 @@ function Callback() {
       );
 
       const data = await response.json();
+      console.log("TOKEN RESPONSE:", data);
+
+      
+      if (!data.access_token) {
+      console.error("Spotify auth failed:", data);
+        return;
+          }
+
 
       localStorage.setItem("spotify_token", data.access_token);
 
