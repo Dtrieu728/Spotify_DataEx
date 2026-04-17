@@ -1,4 +1,4 @@
-const client_id = "2e86f941f1a147628f1f4077fc83365b";
+const client_id = process.env.REACT_APP_CLIENT_ID;
 const redirect_uri = "https://spotify-data-ex.vercel.app/callback";
 
 const scope = [
@@ -40,15 +40,17 @@ export async function login() {
     const hashed = await sha256(code_verifier);
     const challenge = base64encode(hashed);
 
-const params = new URLSearchParams({
-  response_type: "code",
-  client_id, // MUST exist
-  scope: scope.join(" "),
-  code_challenge_method: "S256",
-  code_challenge: challenge,
-  redirect_uri,
-});
+    const params = new URLSearchParams({
+        client_id,
+        response_type: "code",
+        redirect_uri: redirect_uri,  
+        code_challenge: challenge,  
+        code_challenge_method: "S256",
+        scope: scope.join(" "),
+    });
     window.location.href = `https://accounts.spotify.com/authorize?${params.toString()}`;
+
+
     console.log("ENV CLIENT ID:", process.env.REACT_APP_CLIENT_ID);
     console.log("ENV REDIRECT:", process.env.REACT_APP_REDIRECT_URI);
 }
