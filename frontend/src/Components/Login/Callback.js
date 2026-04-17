@@ -1,6 +1,9 @@
 import { useEffect } from "react";
+import {useNavigate} from "react-router-dom";
 
 function Callback() {
+  const navigate = useNavigate();
+
   useEffect(() => {
     async function getToken() {
       const code = new URLSearchParams(window.location.search).get("code");
@@ -30,11 +33,11 @@ function Callback() {
 
       localStorage.setItem("token", data.access_token);
 
-      window.location.href = "/";
+      navigate("/profile");
     }
 
     getToken();
-  }, []);
+  }, [navigate]);
 
   return <div>Logging in...</div>;
 }
