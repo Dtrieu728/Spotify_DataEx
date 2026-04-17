@@ -25,7 +25,7 @@ const Profile = () => {
     }
 
     async function fetchSongs() {
-      const token = localStorage.getItem("spotify_token");
+      const token = localStorage.getItem("token");
 
       if (!token) return;
 
