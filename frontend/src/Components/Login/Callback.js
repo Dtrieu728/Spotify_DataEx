@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 function Callback() {
   const navigate = useNavigate();
+  const redirect_uri = "https://spotify-data-ex.vercel.app/callback";
 
   useEffect(() => {
     async function getToken() {
@@ -14,7 +15,7 @@ function Callback() {
       const body = new URLSearchParams({
         grant_type: "authorization_code",
         code,
-        redirect_uri: process.env.REACT_APP_REDIRECT_URI,
+        redirect_uri: redirect_uri,
         code_verifier: verifier,
       });
 
