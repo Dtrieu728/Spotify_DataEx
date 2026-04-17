@@ -41,18 +41,16 @@ export async function login() {
     const challenge = base64encode(hashed);
 
     const params = new URLSearchParams({
-        response_type: "code",
         client_id: client_id,
-        scope: scope.join(" "),     
+        response_type: "code",
+        redirect_uri: redirect_uri,  
+        code_challenge: challenge,  
         code_challenge_method: "S256",
-        code_challenge: challenge,
-        redirect_uri: redirect_uri,
+        scope: scope.join(" "),
     });
     window.location.href = `https://accounts.spotify.com/authorize?${params.toString()}`;
 
 
-    console.log({
-    client_id,
-    redirect_uri
-    });
+    console.log("ENV CLIENT ID:", process.env.REACT_APP_CLIENT_ID);
+    console.log("ENV REDIRECT:", process.env.REACT_APP_REDIRECT_URI);
 }
