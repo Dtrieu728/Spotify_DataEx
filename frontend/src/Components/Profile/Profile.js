@@ -37,6 +37,10 @@ const Profile = () => {
           },
         }
       );
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/";
+        }
 
       const data = await res.json();
 
@@ -52,7 +56,7 @@ const Profile = () => {
   }, []);
 
   const songsChartData = {
-    labels: songs.map((s) => s.name),
+    labels: songs.map((s) => s.name.slice(0, 18)), // Limit label length
     datasets: [
       {
         label: "Duration (minutes)",
