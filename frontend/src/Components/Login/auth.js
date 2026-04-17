@@ -1,5 +1,5 @@
-const client_id = import.meta.env.VITE_CLIENT_ID;
-const redirect_uri = import.meta.env.VITE_REDIRECT_URI;
+const client_id = import.meta.env.SPOTIPY_CLIENT_ID;
+const redirect_uri = import.meta.env.SPOTIPY_REDIRECT_URI;
 
 const scope = [
     "playlist-read-private",
