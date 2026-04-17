@@ -16,6 +16,7 @@ function Callback() {
         code,
         redirect_uri: process.env.REACT_APP_REDIRECT_URI,
         code_verifier: verifier,
+        client_id: process.env.REACT_APP_CLIENT_ID,
       });
 
       const response = await fetch(
