@@ -1,4 +1,4 @@
-const client_id = process.env.REACT_APP_CLIENT_ID;
+const client_id = "2e86f941f1a147628f1f4077fc83365b";
 const redirect_uri = "https://spotify-data-ex.vercel.app/callback";
 
 const scope = [
