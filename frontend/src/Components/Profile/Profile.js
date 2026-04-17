@@ -25,7 +25,7 @@ const Profile = () => {
     }
 
     async function fetchSongs() {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("spotify_token");
 
       if (!token) return;
 
@@ -38,7 +38,7 @@ const Profile = () => {
         }
       );
       if (res.status === 401) {
-        localStorage.removeItem("token");
+        localStorage.removeItem("spotify_token");
         window.location.href = "/";
         }
 
