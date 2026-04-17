@@ -5,6 +5,8 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./Components/Home/Home";
 import Hero from "./Components/Hero/Hero";
 import Profile from "./Components/Profile/Profile";
+import Callback from "./Components/Login/Callback";
+import { login } from "./Components/Login/auth";
 
 
 
@@ -71,6 +73,7 @@ if (loading) {
         <Route path="/" element={<Hero />} />
         <Route path="/profile" element={<Home topSongs={topSongs} topArtists={topArtists} topAlbums={topAlbums} />} />
         <Route path="/userpage" element={<Profile />} />
+        <Route path="/callback" element={<Callback />} />
       </Routes>
     </div>
   );

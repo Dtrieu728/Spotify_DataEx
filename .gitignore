@@ -4,3 +4,4 @@ myenv/
 .cache
 __pycache__/
 .spotipycache
+.vercel
