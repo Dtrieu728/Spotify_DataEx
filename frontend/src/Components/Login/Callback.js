@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 function Callback() {
   const navigate = useNavigate();
+
   const redirect_uri = "https://spotify-data-ex.vercel.app/callback";
+  const client_id = "2e86f941f1a147628f1f4077fc83365b";
 
   useEffect(() => {
     async function getToken() {
@@ -13,15 +15,12 @@ function Callback() {
       if (!code || !verifier) return;
 
       const body = new URLSearchParams({
+        client_id: client_id,
         grant_type: "authorization_code",
-        code,
+        code: code,
         redirect_uri: redirect_uri,
         code_verifier: verifier,
       });
-
-      console.log("CODE:", code);
-      console.log("VERIFIER:", verifier);
-      console.log("REDIRECT:", redirect_uri);
 
       const response = await fetch(
         "https://accounts.spotify.com/api/token",
@@ -30,16 +29,16 @@ function Callback() {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },
-          body,
+          body: body,
         }
       );
 
       const data = await response.json();
 
-      console.log("TOKEN RESPONSE:", data);
+      console.log(data);
 
       if (!data.access_token) {
-        console.error("Spotify auth failed:", data);
+        console.error(data);
         return;
       }
 
