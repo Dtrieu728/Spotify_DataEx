@@ -10,9 +10,9 @@ load_dotenv(override=True)
 
 def get_spotify_client():
     return spotipy.Spotify(auth_manager=SpotifyOAuth(
-        client_id=os.getenv("SPOTIPY_CLIENT_ID"),
-        client_secret=os.getenv("SPOTIPY_CLIENT_SECRET"),
-        redirect_uri="http://127.0.0.1:8888/callback",
+        client_id=os.getenv("REACT_APP_CLIENT_ID"),
+        client_secret=os.getenv("REACT_APP_CLIENT_SECRET"),
+        redirect_uri=os.getenv("REACT_APP_REDIRECT_URI"),
         scope="user-library-read user-top-read playlist-read-private",
         cache_path=".spotifycache"
     ))
