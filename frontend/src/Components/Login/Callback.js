@@ -10,6 +10,7 @@ function Callback() {
       const verifier = localStorage.getItem("code_verifier");
 
       const body = new URLSearchParams({
+        client_id: process.env.REACT_APP_CLIENT_ID,
         grant_type: "authorization_code",
         code: code,
         redirect_uri: process.env.REACT_APP_REDIRECT_URI,
