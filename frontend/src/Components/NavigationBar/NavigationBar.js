@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import './NavigationBar.css'; 
-import { HOME, INSIGHTS, PROFILE, USERPAGE, PLAYLISTS } from "../../Constants/routes";
+import { HOME,PROFILE, USERPAGE } from "../../Constants/routes";
 
 
 function NavigationBar() {

@@ -6,7 +6,7 @@ import Home from "./Components/Home/Home";
 import Hero from "./Components/Hero/Hero";
 import Profile from "./Components/Profile/Profile";
 import Callback from "./Components/Login/Callback";
-import { login } from "./Components/Login/auth";
+
 
 
 
