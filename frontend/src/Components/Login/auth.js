@@ -49,4 +49,10 @@ export async function login() {
         redirect_uri: redirect_uri,
     });
     window.location.href = `https://accounts.spotify.com/authorize?${params.toString()}`;
+
+
+    console.log({
+    client_id,
+    redirect_uri
+    });
 }
