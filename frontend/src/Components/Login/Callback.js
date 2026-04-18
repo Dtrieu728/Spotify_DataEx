@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-const redirect_uri = process.env.REACT_APP__REDIRECT_URI;
+const redirect_uri = "https://spotify-data-ex.vercel.app/callback";
 const client_id = process.env.REACT_APP_CLIENT_ID;
 
 function Callback() {
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     async function getToken() {
       const code = new URLSearchParams(window.location.search).get("code");
