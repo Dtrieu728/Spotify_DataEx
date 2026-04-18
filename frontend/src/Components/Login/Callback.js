@@ -43,7 +43,7 @@ function Callback() {
 
       localStorage.setItem("spotify_token", data.access_token);
 
-      navigate("/profile");
+     window.location.href = "/profile"; // Redirect to home after successful login
     }
 
     getToken();
