@@ -44,7 +44,7 @@ function App() {
           Authorization: `Bearer ${token}`,
         };
 
-        const [songsRes, artistsRes, albumsRes] = await Promise.all([
+        const [songsRes, artistsRes] = await Promise.all([
           fetch(
             "https://api.spotify.com/v1/me/top/tracks?limit=20",
             { headers }
@@ -53,16 +53,11 @@ function App() {
             "https://api.spotify.com/v1/me/top/artists?limit=20",
             { headers }
           ),
-          fetch(
-            "https://api.spotify.com/v1/me/top/albums?limit=20",
-            { headers }
-          ),
         ]);
 
         if (
           songsRes.status === 401 ||
-          artistsRes.status === 401 ||
-          albumsRes.status === 401
+          artistsRes.status === 401
         ) {
           localStorage.removeItem("spotify_token");
           setToken(null);
@@ -71,7 +66,6 @@ function App() {
 
         const songsData = await songsRes.json();
         const artistsData = await artistsRes.json();
-        const albumsData = await albumsRes.json();
 
         const songs = (songsData.items || []).map(
           (track) => ({
@@ -81,8 +75,7 @@ function App() {
               .join(", "),
             duration_ms: track.duration_ms,
             album: track.album.name,
-            release_year:
-              track?.album?.release_date?.split("-")[0] || null,
+           release_year: track?.album?.release_date?.split("-")[0] || null,
           })
         );
 
@@ -92,13 +85,19 @@ function App() {
           })
         );
 
-        const albums = (albumsData.items || []).map((album) => ({
-          name: album.name,
-          artist: album.artists
-            .map((a) => a.name)
-            .join(", "),
-          release_year: album.release_date?.split("-")[0] || null,
-        }));
+        const albumMap = {};
+
+      songs.forEach((track) => {
+        const albumName = track.album;
+        if (!albumName) return;
+
+           albumMap[albumName] = (albumMap[albumName] || 0) + 1;
+            });
+
+        const albums = Object.entries(albumMap).map(([name, count]) => ({
+        name,
+        count,
+          }));
 
         setTopSongs(songs);
         setTopArtists(artists);
@@ -146,6 +145,7 @@ function App() {
             <Profile
               songs={topSongs}
               artists={topArtists}
+              albums={topAlbums}
             />
           }
         />
