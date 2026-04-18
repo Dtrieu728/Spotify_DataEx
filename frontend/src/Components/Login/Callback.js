@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 function Callback() {
   const navigate = useNavigate();
 
-  const redirect_uri = "https://spotify-data-ex.vercel.app/callback";
-  const client_id = "2e86f941f1a147628f1f4077fc83365b";
+  const redirect_uri = process.env.REACT_APP__REDIRECT_URI;
+const client_id = process.env.REACT_APP_CLIENT_ID;
 
   useEffect(() => {
     async function getToken() {
