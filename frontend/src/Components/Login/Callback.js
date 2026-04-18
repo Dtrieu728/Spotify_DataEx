@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+const redirect_uri = process.env.REACT_APP__REDIRECT_URI;
+const client_id = process.env.REACT_APP_CLIENT_ID;
 
 function Callback() {
   const navigate = useNavigate();
-  const redirect_uri = process.env.REACT_APP__REDIRECT_URI;
-  const client_id = process.env.REACT_APP_CLIENT_ID;
-
+  
   useEffect(() => {
     async function getToken() {
       const code = new URLSearchParams(window.location.search).get("code");
