@@ -29,23 +29,23 @@ const Profile = ({ songs = [], artists = [] }) => {
 
 
   const releaseYearData = useMemo(() => {
-    const counts = {};
+    const yearCounts = {};
 
     songs.forEach((song) => {
-      const year = song.release_year;
+      const year = song?.release_year;
       if (!year) return;
 
-      counts[year] = (counts[year] || 0) + 1;
+      yearCounts[year] = (yearCounts[year] || 0) + 1;
     });
 
-    const years = Object.keys(counts).sort();
+    const years = Object.keys(yearCounts).sort();
 
     return {
       labels: years,
       datasets: [
         {
           label: "Songs by Release Year",
-          data: years.map((y) => counts[y]),
+          data: years.map((y) => yearCounts[y]),
           borderWidth: 2,
           tension: 0.3,
         },
