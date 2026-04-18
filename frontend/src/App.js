@@ -11,7 +11,6 @@ import Callback from "./Components/Login/Callback";
 function App() {
   const [topSongs, setTopSongs] = useState([]);
   const [topArtists, setTopArtists] = useState([]);
-  const [topAlbums, setTopAlbums] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [token, setToken] = useState(
@@ -85,12 +84,6 @@ function App() {
             name: artist.name,
           })
         );
-
-        const albums = songsData.items.map((track) => ({
-          name: track.album.name,
-          artist: track.album.artists.map((a) => a.name).join(", "),
-          release_year: track.album.release_date?.slice(0, 4),
-          }));
 
         setTopSongs(songs);
         setTopArtists(artists);
