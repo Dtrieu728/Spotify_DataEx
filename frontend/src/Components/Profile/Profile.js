@@ -32,7 +32,7 @@ const Profile = ({ songs = [], artists = [] }) => {
     const counts = {};
 
     songs.forEach((song) => {
-      const year = song?.release_year;
+      const year = song.release_year;
       if (!year) return;
 
       counts[year] = (counts[year] || 0) + 1;
