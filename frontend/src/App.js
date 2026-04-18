@@ -119,7 +119,6 @@ function App() {
             <Home
               topSongs={topSongs}
               topArtists={topArtists}
-              topAlbums={topAlbums}
             />
           }
         />
