@@ -28,30 +28,31 @@ const Profile = ({ songs = [], artists = [] }) => {
   const lastUpdated = localStorage.getItem("lastUpdated");
 
 
-  const releaseYearData = useMemo(() => {
-    const yearCounts = {};
+const releaseYearData = useMemo(() => {
+  const yearCounts = {};
 
-    songs.forEach((song) => {
-      const year = song?.release_year;
-      if (!year) return;
+  songs.forEach((song) => {
+    const year = song?.release_year;
 
-      yearCounts[year] = (yearCounts[year] || 0) + 1;
-    });
+    if (!year || year === "undefined") return;
 
-    const years = Object.keys(yearCounts).sort();
+    yearCounts[String(year)] = (yearCounts[String(year)] || 0) + 1;
+  });
 
-    return {
-      labels: years,
-      datasets: [
-        {
-          label: "Songs by Release Year",
-          data: years.map((y) => yearCounts[y]),
-          borderWidth: 2,
-          tension: 0.3,
-        },
-      ],
-    };
-  }, [songs]);
+  const years = Object.keys(yearCounts).sort();
+
+  return {
+    labels: years,
+    datasets: [
+      {
+        label: "Songs by Release Year",
+        data: years.map((y) => yearCounts[y]),
+        borderWidth: 2,
+        tension: 0.3,
+      },
+    ],
+  };
+}, [songs]);
 
 
   const artistFrequencyData = useMemo(() => {

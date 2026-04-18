@@ -12,6 +12,7 @@ function App() {
   const [topSongs, setTopSongs] = useState([]);
   const [topArtists, setTopArtists] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [topAlbums, setTopAlbums] = useState([]);
 
   const [token, setToken] = useState(
     localStorage.getItem("spotify_token")
@@ -43,7 +44,7 @@ function App() {
           Authorization: `Bearer ${token}`,
         };
 
-        const [songsRes, artistsRes] = await Promise.all([
+        const [songsRes, artistsRes, albumsRes] = await Promise.all([
           fetch(
             "https://api.spotify.com/v1/me/top/tracks?limit=20",
             { headers }
@@ -52,11 +53,16 @@ function App() {
             "https://api.spotify.com/v1/me/top/artists?limit=20",
             { headers }
           ),
+          fetch(
+            "https://api.spotify.com/v1/me/top/albums?limit=20",
+            { headers }
+          ),
         ]);
 
         if (
           songsRes.status === 401 ||
-          artistsRes.status === 401
+          artistsRes.status === 401 ||
+          albumsRes.status === 401
         ) {
           localStorage.removeItem("spotify_token");
           setToken(null);
@@ -65,6 +71,7 @@ function App() {
 
         const songsData = await songsRes.json();
         const artistsData = await artistsRes.json();
+        const albumsData = await albumsRes.json();
 
         const songs = (songsData.items || []).map(
           (track) => ({
@@ -74,7 +81,8 @@ function App() {
               .join(", "),
             duration_ms: track.duration_ms,
             album: track.album.name,
-           release_year: track?.album?.release_date?.split("-")[0] || null,
+            release_year:
+              track?.album?.release_date?.split("-")[0] || null,
           })
         );
 
@@ -84,8 +92,17 @@ function App() {
           })
         );
 
+        const albums = (albumsData.items || []).map((album) => ({
+          name: album.name,
+          artist: album.artists
+            .map((a) => a.name)
+            .join(", "),
+          release_year: album.release_date?.split("-")[0] || null,
+        }));
+
         setTopSongs(songs);
         setTopArtists(artists);
+        setTopAlbums(albums);
 
       } catch (err) {
         console.error("Spotify fetch failed:", err);
@@ -118,6 +135,7 @@ function App() {
             <Home
               topSongs={topSongs}
               topArtists={topArtists}
+              topAlbums={topAlbums}
             />
           }
         />
