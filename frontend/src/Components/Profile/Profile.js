@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -11,6 +11,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import "./Profile.css";
 
 ChartJS.register(
   CategoryScale,
@@ -23,192 +24,162 @@ ChartJS.register(
   Legend
 );
 
-const Profile = () => {
-  const [songs, setSongs] = useState([]);
-  const [lastUpdated, setLastUpdated] = useState(
+const Profile = ({
+  songs = [],
+  artists = [],
+  albums = [],
+}) => {
+  const [lastUpdated] = useState(
     localStorage.getItem("lastUpdated")
   );
-  
 
-  useEffect(() => {
-    const cached = localStorage.getItem("songData");
+  /* ----------------------------------
+     RELEASE YEAR CHART
+  ---------------------------------- */
+  const yearCounts = {};
 
-    if (cached) {
-      try {
-        setSongs(JSON.parse(cached));
-      } catch {
-        localStorage.removeItem("songData");
-      }
-    }
+  albums.forEach((album) => {
+    const year = album?.release_year;
 
-    async function fetchSongs() {
-      try {
-        const token = localStorage.getItem("spotify_token");
-        if (!token) return;
+    if (!year) return;
 
-        const res = await fetch(
-          "https://api.spotify.com/v1/me/top/tracks?limit=20",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+    yearCounts[year] =
+      (yearCounts[year] || 0) + 1;
+  });
 
-        if (res.status === 401) {
-          localStorage.removeItem("spotify_token");
-          window.location.href = "/";
-          return;
-        }
+  const sortedYears = Object.keys(
+    yearCounts
+  ).sort();
 
-        const data = await res.json();
-        const tracks = data.items || [];
+  const releaseYearData = {
+    labels: sortedYears,
+    datasets: [
+      {
+        label: "Albums by Release Year",
+        data: sortedYears.map(
+          (year) => yearCounts[year]
+        ),
+        borderWidth: 3,
+        tension: 0.3,
+      },
+    ],
+  };
 
-        setSongs(tracks);
-        localStorage.setItem("songData", JSON.stringify(tracks));
-
-        const now = new Date().toISOString();
-        localStorage.setItem("lastUpdated", now);
-        setLastUpdated(now);
-      } catch (err) {
-        console.error("Fetch failed:", err);
-      }
-    }
-
-    fetchSongs();
-  }, []);
-
-// Analyze release years
-
- const yearCounts = {};
-
-songs.forEach((song) => {
-  const releaseDate = song?.album?.release_date;
-  if (!releaseDate) return;
-
-  const year = releaseDate.slice(0, 4);
-
-  yearCounts[year] = (yearCounts[year] || 0) + 1;
-});
-
-const sortedYears = Object.keys(yearCounts).sort();
-
-const releaseYearData = {
-  labels: sortedYears,
-  datasets: [
-    {
-      label: "Albums by Release Year",
-      data: sortedYears.map((y) => yearCounts[y]),
-      borderWidth: 2,
-      tension: 0.3,
-    },
-  ],
-};
-
-
-// Analyze artist frequency
+  /* ----------------------------------
+     ARTIST FREQUENCY CHART
+  ---------------------------------- */
   const artistCounts = {};
 
   songs.forEach((song) => {
-    const artists =
-      song?.artists?.map((a) => a.name).join(", ") || "Unknown";
+    const artist =
+      song?.artist || "Unknown";
 
-    artistCounts[artists] = (artistCounts[artists] || 0) + 1;
+    artistCounts[artist] =
+      (artistCounts[artist] || 0) + 1;
   });
 
-  const sortedArtists = Object.entries(artistCounts)
+  const sortedArtists = Object.entries(
+    artistCounts
+  )
     .sort((a, b) => b[1] - a[1])
     .slice(0, 10);
 
   const artistFrequencyData = {
-    labels: sortedArtists.map((a) => a[0]),
-    datasets: [
-      {
-        label: "Tracks in Top Songs",
-        data: sortedArtists.map((a) => a[1]),
-        backgroundColor: "rgba(153,102,255,0.6)",
-      },
-    ],
-  };
-
-
-// Analyze song durations
-  const songsChartData = {
-    labels: songs.map((s) =>
-      (s?.name || "Unknown").length > 18
-        ? s.name.slice(0, 18) + "..."
-        : s?.name || "Unknown"
+    labels: sortedArtists.map(
+      (item) => item[0]
     ),
     datasets: [
       {
-        label: "Duration (minutes)",
-        data: songs.map((s) => (s?.duration_ms || 0) / 60000),
-        backgroundColor: "rgba(75,192,192,0.6)",
+        label: "Tracks in Top Songs",
+        data: sortedArtists.map(
+          (item) => item[1]
+        ),
+        backgroundColor:
+          "rgba(153,102,255,0.7)",
       },
     ],
   };
 
+  /* ----------------------------------
+     SONG DURATION CHART
+  ---------------------------------- */
+  const songsChartData = {
+    labels: songs.map((song) =>
+      song.name.length > 18
+        ? song.name.slice(0, 18) + "..."
+        : song.name
+    ),
+
+    datasets: [
+      {
+        label: "Duration (Minutes)",
+        data: songs.map(
+          (song) =>
+            song.duration_ms / 60000
+        ),
+        backgroundColor:
+          "rgba(75,192,192,0.7)",
+      },
+    ],
+  };
 
   return (
     <div className="profile-page">
-      <h1 className="title" align="center">
-        Profile
+      <h1 className="title">
+        Profile Analytics
       </h1>
 
-      <p style={{ color: "white" }}>
+      <p className="updated-text">
         Last updated:{" "}
-        {lastUpdated ? new Date(lastUpdated).toLocaleString() : "Never"}
+        {lastUpdated
+          ? new Date(
+              lastUpdated
+            ).toLocaleString()
+          : "Never"}
       </p>
 
-      <div className="chart-container" >
+      <div className="chart-container">
         <div style={{ maxWidth: 800, margin: "0 auto" }}>
-        <h2 style={{ color: "white" }}>Top Songs by Duration</h2>
-        <Bar
-          data={songsChartData}
-          options={{
-            responsive: true,
-            plugins: {
-              legend: { display: true },
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: "Minutes",
-                },
-              },
-            },
-          }}
-        />
-        </div>
+          <h2>
+            Top Songs by Duration
+          </h2>
 
-        <div style={{ maxWidth: 800, margin: "0 auto" }}>
-          <h2>Release Year Trends</h2>
-          <Line data={releaseYearData}
+          <Bar
+            data={songsChartData}
             options={{
               responsive: true,
               maintainAspectRatio: true,
-              plugins:{
-                legend:{ display:true }
-              }
             }}
-           />
+          />
         </div>
 
         <div style={{ maxWidth: 800, margin: "0 auto" }}>
-          <h2>Artist Frequency</h2>
-          <Bar data={artistFrequencyData}
+          <h2>
+            Release Year Trends
+          </h2>
+
+          <Line
+            data={releaseYearData}
             options={{
               responsive: true,
               maintainAspectRatio: true,
-              plugins:{
-                legend:{ display:true }
-              }
             }}
-           />
+          />
         </div>
+        <div style={{ maxWidth: 800, margin: "0 auto" }}>
+          <h2>
+            Artist Frequency
+          </h2>
 
+          <Bar
+            data={artistFrequencyData}
+            options={{
+              responsive: true,
+              maintainAspectRatio: true,
+              indexAxis: "y",
+            }}
+          />
+        </div>
       </div>
     </div>
   );
