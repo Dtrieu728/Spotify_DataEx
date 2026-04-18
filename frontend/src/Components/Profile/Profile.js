@@ -28,6 +28,7 @@ const Profile = () => {
   const [lastUpdated, setLastUpdated] = useState(
     localStorage.getItem("lastUpdated")
   );
+  
 
   useEffect(() => {
     const cached = localStorage.getItem("songData");
@@ -157,20 +158,53 @@ const Profile = () => {
         {lastUpdated ? new Date(lastUpdated).toLocaleString() : "Never"}
       </p>
 
-      <div className="chart-container">
-        <div className="card">
+      <div className="chart-container" >
+        <div style={{ maxWidth: 800, margin: "0 auto" }}>
         <h2 style={{ color: "white" }}>Top Songs by Duration</h2>
-        <Bar data={songsChartData} />
+        <Bar
+          data={songsChartData}
+          options={{
+            responsive: true,
+            plugins: {
+              legend: { display: true },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Minutes",
+                },
+              },
+            },
+          }}
+        />
         </div>
 
-        <div className="card">
+        <div style={{ maxWidth: 800, margin: "0 auto" }}>
           <h2>Release Year Trends</h2>
-          <Line data={releaseYearData} />
+          <Line data={releaseYearData}
+            options={{
+              responsive: true,
+              maintainAspectRatio: true,
+              plugins:{
+                legend:{ display:true }
+              }
+            }}
+           />
         </div>
 
-        <div className="card">
+        <div style={{ maxWidth: 800, margin: "0 auto" }}>
           <h2>Artist Frequency</h2>
-          <Bar data={artistFrequencyData} />
+          <Bar data={artistFrequencyData}
+            options={{
+              responsive: true,
+              maintainAspectRatio: true,
+              plugins:{
+                legend:{ display:true }
+              }
+            }}
+           />
         </div>
 
       </div>
