@@ -86,20 +86,15 @@ function App() {
           })
         );
 
-        const albums = (songsData.items || []).map(
-          (track) => ({
-            name: track.album.name,
-            artist: track.album.artists
-              .map((a) => a.name)
-              .join(", "),
-            release_year:
-              track.album.release_date?.slice(0, 4),
-          })
-        );
+        const albums = songsData.items.map((track) => ({
+          name: track.album.name,
+          artist: track.album.artists.map((a) => a.name).join(", "),
+          release_year: track.album.release_date?.slice(0, 4),
+          }));
 
         setTopSongs(songs);
         setTopArtists(artists);
-        setTopAlbums(albums);
+
       } catch (err) {
         console.error("Spotify fetch failed:", err);
       } finally {
@@ -142,7 +137,6 @@ function App() {
             <Profile
               songs={topSongs}
               artists={topArtists}
-              albums={topAlbums}
             />
           }
         />
