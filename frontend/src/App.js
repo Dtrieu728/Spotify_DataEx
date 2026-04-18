@@ -14,67 +14,108 @@ function App() {
   const [topAlbums, setTopAlbums] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [token, setToken] = useState(localStorage.getItem("spotify_token"));
+  const [token, setToken] = useState(
+    localStorage.getItem("spotify_token")
+  );
 
+  // Detect login token updates
   useEffect(() => {
-  const onStorage = () => {
-    setToken(localStorage.getItem("spotify_token"));
-  };
+    const onStorage = () => {
+      setToken(localStorage.getItem("spotify_token"));
+    };
 
-  window.addEventListener("storage", onStorage);
-  return () => window.removeEventListener("storage", onStorage);
-}, []);
+    window.addEventListener("storage", onStorage);
+    return () =>
+      window.removeEventListener("storage", onStorage);
+  }, []);
 
-useEffect(() => {
-  async function fetchData() {
-    try {
-      if (!token) {
+  // Fetch Spotify data
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
+        setLoading(true);
+
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
+
+        const [songsRes, artistsRes] = await Promise.all([
+          fetch(
+            "https://api.spotify.com/v1/me/top/tracks?limit=20",
+            { headers }
+          ),
+          fetch(
+            "https://api.spotify.com/v1/me/top/artists?limit=20",
+            { headers }
+          ),
+        ]);
+
+        if (
+          songsRes.status === 401 ||
+          artistsRes.status === 401
+        ) {
+          localStorage.removeItem("spotify_token");
+          setToken(null);
+          return;
+        }
+
+        const songsData = await songsRes.json();
+        const artistsData = await artistsRes.json();
+
+        const songs = (songsData.items || []).map(
+          (track) => ({
+            name: track.name,
+            artist: track.artists
+              .map((a) => a.name)
+              .join(", "),
+            duration_ms: track.duration_ms,
+            album: track.album.name,
+            release_year:
+              track.album.release_date?.slice(0, 4),
+          })
+        );
+
+        const artists = (artistsData.items || []).map(
+          (artist) => ({
+            name: artist.name,
+          })
+        );
+
+        const albums = (songsData.items || []).map(
+          (track) => ({
+            name: track.album.name,
+            artist: track.album.artists
+              .map((a) => a.name)
+              .join(", "),
+            release_year:
+              track.album.release_date?.slice(0, 4),
+          })
+        );
+
+        setTopSongs(songs);
+        setTopArtists(artists);
+        setTopAlbums(albums);
+      } catch (err) {
+        console.error("Spotify fetch failed:", err);
+      } finally {
         setLoading(false);
-        return;
       }
-
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-
-      const [songsRes, artistsRes] = await Promise.all([
-        fetch("https://api.spotify.com/v1/me/top/tracks?limit=20", { headers }),
-        fetch("https://api.spotify.com/v1/me/top/artists?limit=20", { headers }),
-      ]);
-
-      const songsData = await songsRes.json();
-      const artistsData = await artistsRes.json();
-
-      const songs = (songsData.items || []).map(track => ({
-        name: track.name,
-        artist: track.artists.map(a => a.name).join(", "),
-        release_year: track.album.release_date.slice(0, 4),
-      }));
-
-      const artists = (artistsData.items || []).map(artist => ({
-        name: artist.name,
-      }));
-
-      const albums = (songsData.items || []).map(track => ({
-        name: track.album.name,
-        artist: track.album.artists.map(a => a.name).join(", "),
-      }));
-
-      setTopSongs(songs);
-      setTopArtists(artists);
-      setTopAlbums(albums);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
     }
-  }
 
-  fetchData();
-}, [token]);
+    fetchData();
+  }, [token]);
 
   if (loading) {
-    return <h1 style={{ color: "white" }}>Loading...</h1>;
+    return (
+      <h1 style={{ color: "white" }}>
+        Loading...
+      </h1>
+    );
   }
 
   return (
@@ -95,8 +136,21 @@ useEffect(() => {
           }
         />
 
-        <Route path="/userpage" element={<Profile />} />
-        <Route path="/callback" element={<Callback />} />
+        <Route
+          path="/userpage"
+          element={
+            <Profile
+              songs={topSongs}
+              artists={topArtists}
+              albums={topAlbums}
+            />
+          }
+        />
+
+        <Route
+          path="/callback"
+          element={<Callback />}
+        />
       </Routes>
     </div>
   );
