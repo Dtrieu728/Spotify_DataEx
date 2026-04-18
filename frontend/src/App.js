@@ -48,6 +48,7 @@ useEffect(() => {
       const songs = (songsData.items || []).map(track => ({
         name: track.name,
         artist: track.artists.map(a => a.name).join(", "),
+        release_year: track.album.release_date.slice(0, 4),
       }));
 
       const artists = (artistsData.items || []).map(artist => ({
