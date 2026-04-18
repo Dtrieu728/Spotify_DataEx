@@ -80,28 +80,30 @@ const Profile = () => {
 
 // Analyze release years
 
-  const yearCounts = {};
+ const yearCounts = {};
 
-  songs.forEach((song) => {
-    const year = song?.album?.release_date?.slice(0, 4);
-    if (!year) return;
+songs.forEach((song) => {
+  const releaseDate = song?.album?.release_date;
+  if (!releaseDate) return;
 
-    yearCounts[year] = (yearCounts[year] || 0) + 1;
-  });
+  const year = releaseDate.slice(0, 4);
 
-  const sortedYears = Object.keys(yearCounts).sort();
+  yearCounts[year] = (yearCounts[year] || 0) + 1;
+});
 
-  const releaseYearData = {
-    labels: sortedYears,
-    datasets: [
-      {
-        label: "Number of Songs",
-        data: sortedYears.map((y) => yearCounts[y]),
-        borderWidth: 2,
-        tension: 0.3,
-      },
-    ],
-  };
+const sortedYears = Object.keys(yearCounts).sort();
+
+const releaseYearData = {
+  labels: sortedYears,
+  datasets: [
+    {
+      label: "Albums by Release Year",
+      data: sortedYears.map((y) => yearCounts[y]),
+      borderWidth: 2,
+      tension: 0.3,
+    },
+  ],
+};
 
 
 // Analyze artist frequency
