@@ -1,0 +1,49 @@
+.profile-page {
+  padding: 40px 20px;
+  background: #121212;
+  min-height: 100vh;
+}
+
+.title {
+  color: white;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.profile-page p {
+  text-align: center;
+  color: #b3b3b3;
+  margin-bottom: 30px;
+}
+
+.chart-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  gap: 40px;
+}
+
+.card {
+  background: #181818;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.card h2 {
+  color: white;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+canvas {
+  width: 100% !important;
+  height: 420px !important;
+}
+
+.card:hover {
+  transform: scale(1.01);
+  transition: 0.2s ease;
+}

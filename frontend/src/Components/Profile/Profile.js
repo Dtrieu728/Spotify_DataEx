@@ -77,9 +77,7 @@ const Profile = () => {
     fetchSongs();
   }, []);
 
-  /* =========================
-      RELEASE YEAR DATA
-  ========================= */
+// Analyze release years
 
   const yearCounts = {};
 
@@ -104,10 +102,8 @@ const Profile = () => {
     ],
   };
 
-  /* =========================
-      ARTIST FREQUENCY
-  ========================= */
 
+// Analyze artist frequency
   const artistCounts = {};
 
   songs.forEach((song) => {
@@ -132,10 +128,8 @@ const Profile = () => {
     ],
   };
 
-  /* =========================
-      SONG DURATION CHART
-  ========================= */
 
+// Analyze song durations
   const songsChartData = {
     labels: songs.map((s) =>
       (s?.name || "Unknown").length > 18
@@ -151,10 +145,9 @@ const Profile = () => {
     ],
   };
 
-  /* ========================= */
 
   return (
-    <div>
+    <div className="profile-page">
       <h1 className="title" align="center">
         Profile
       </h1>
@@ -164,9 +157,11 @@ const Profile = () => {
         {lastUpdated ? new Date(lastUpdated).toLocaleString() : "Never"}
       </p>
 
-      <div style={{ maxWidth: 800, margin: "0 auto" }}>
+      <div className="chart-container">
+        <div className="card">
         <h2 style={{ color: "white" }}>Top Songs by Duration</h2>
         <Bar data={songsChartData} />
+        </div>
 
         <div className="card">
           <h2>Release Year Trends</h2>
@@ -177,6 +172,7 @@ const Profile = () => {
           <h2>Artist Frequency</h2>
           <Bar data={artistFrequencyData} />
         </div>
+
       </div>
     </div>
   );
