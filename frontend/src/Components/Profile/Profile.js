@@ -24,7 +24,7 @@ ChartJS.register(
   Legend
 );
 
-const Profile = ({ songs = [], artists = [] }, albums = []) => {
+const Profile = ({ songs = [], artists = [] }) => {
   const lastUpdated = localStorage.getItem("lastUpdated");
 
 
@@ -55,22 +55,29 @@ const releaseYearData = useMemo(() => {
 }, [songs]);
 
 
-const albumFrequencyData = useMemo(() => {
-  const sorted = [...albums]
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 10);
+  const artistFrequencyData = useMemo(() => {
+    const counts = {};
 
-  return {
-    labels: sorted.map((a) => a.name),
-    datasets: [
-      {
-        label: "Album frequency (from top tracks)",
-        data: sorted.map((a) => a.count),
-        backgroundColor: "rgba(255, 159, 64, 0.7)",
-      },
-    ],
-  };
-}, [albums]);
+    songs.forEach((song) => {
+      const artist = song.artist || "Unknown";
+      counts[artist] = (counts[artist] || 0) + 1;
+    });
+
+    const sorted = Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10);
+
+    return {
+      labels: sorted.map((a) => a[0]),
+      datasets: [
+        {
+          label: "Tracks per Artist",
+          data: sorted.map((a) => a[1]),
+          backgroundColor: "rgba(153,102,255,0.7)",
+        },
+      ],
+    };
+  }, [songs]);
 
 
   const songsChartData = useMemo(() => {
@@ -126,9 +133,9 @@ const albumFrequencyData = useMemo(() => {
         </div>
 
         <div style={{ maxWidth: 900, margin: "0 auto", height: 400 }}>
-          <h2>Album Frequency</h2>
+          <h2>Artist Frequency</h2>
           <Bar
-            data={albumFrequencyData}
+            data={artistFrequencyData}
             options={{
               responsive: true,
               maintainAspectRatio: false,
