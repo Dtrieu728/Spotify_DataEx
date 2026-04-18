@@ -3,9 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 function Callback() {
   const navigate = useNavigate();
-
   const redirect_uri = process.env.REACT_APP__REDIRECT_URI;
-const client_id = process.env.REACT_APP_CLIENT_ID;
+  const client_id = process.env.REACT_APP_CLIENT_ID;
 
   useEffect(() => {
     async function getToken() {
