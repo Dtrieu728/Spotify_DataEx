@@ -24,59 +24,40 @@ ChartJS.register(
   Legend
 );
 
-const Profile = ({
-  songs = [],
-  artists = [],
-  albums = [],
-}) => {
-  const [lastUpdated] = useState(
-    localStorage.getItem("lastUpdated")
-  );
+const Profile = ({ songs = [], artists = [], albums = [] }) => {
+  const lastUpdated = localStorage.getItem("lastUpdated");
 
-  /* ----------------------------------
-     RELEASE YEAR CHART
-  ---------------------------------- */
+  // Release Year Data
   const yearCounts = {};
 
   albums.forEach((album) => {
-    const year = album?.release_year;
+    if (!album.release_year) return;
 
-    if (!year) return;
-
-    yearCounts[year] =
-      (yearCounts[year] || 0) + 1;
+    yearCounts[album.release_year] =
+      (yearCounts[album.release_year] || 0) + 1;
   });
 
-  const sortedYears = Object.keys(
-    yearCounts
-  ).sort();
+  const sortedYears = Object.keys(yearCounts).sort();
 
   const releaseYearData = {
     labels: sortedYears,
     datasets: [
       {
         label: "Albums by Release Year",
-        data: sortedYears.map(
-          (year) => yearCounts[year]
-        ),
-        borderWidth: 3,
+        data: sortedYears.map((year) => yearCounts[year]),
+        borderWidth: 2,
         tension: 0.3,
       },
     ],
   };
+  // Artist Frequency Data
+ const artistCounts = {};
 
-  /* ----------------------------------
-     ARTIST FREQUENCY CHART
-  ---------------------------------- */
-  const artistCounts = {};
+songs.forEach((song) => {
+  const artist = song.artist || "Unknown";
 
-  songs.forEach((song) => {
-    const artist =
-      song?.artist || "Unknown";
-
-    artistCounts[artist] =
-      (artistCounts[artist] || 0) + 1;
-  });
+  artistCounts[artist] = (artistCounts[artist] || 0) + 1;
+});
 
   const sortedArtists = Object.entries(
     artistCounts
@@ -100,9 +81,7 @@ const Profile = ({
     ],
   };
 
-  /* ----------------------------------
-     SONG DURATION CHART
-  ---------------------------------- */
+// Songs by Duration Data
   const songsChartData = {
     labels: songs.map((song) =>
       song.name.length > 18
