@@ -38,7 +38,7 @@ const releaseYearData = useMemo(() => {
 
     yearCounts[String(year)] = (yearCounts[String(year)] || 0) + 1;
   });
-
+  
   const years = Object.keys(yearCounts).sort();
 
   return {
@@ -97,6 +97,10 @@ const releaseYearData = useMemo(() => {
     };
   }, [songs]);
 
+
+  console.log("Profile render with songs:", songs);
+  console.log("Profile render with artists:", artists);
+  console.log("Albums data:", releaseYearData);
   return (
     <div className="profile-page">
       <h1 className="title">Profile Analytics</h1>

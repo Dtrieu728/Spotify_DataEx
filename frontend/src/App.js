@@ -75,7 +75,7 @@ function App() {
               .join(", "),
             duration_ms: track.duration_ms,
             album: track.album.name,
-           release_year: track?.album?.release_date?.split("-")[0] || null,
+           release_year: track?.album?.release_date?.slice(0, 4) || null,
           })
         );
 
