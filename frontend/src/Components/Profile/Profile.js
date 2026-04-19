@@ -49,6 +49,7 @@ const releaseYearData = useMemo(() => {
         data: years.map((y) => yearCounts[y]),
         borderWidth: 2,
         tension: 0.3,
+        backgroundColor: "rgba(255,99,132,0.7)",
       },
     ],
   };
