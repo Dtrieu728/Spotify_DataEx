@@ -54,7 +54,7 @@ const Home = ({ topSongs = [], topArtists = [], topAlbums = [] }) => {
           toggle={() => setShowAllAlbums(!showAllAlbums)}
           render={(album, i) => (
             <div className="item" key={`${album.name}-${album.artist}`}>
-              #{i + 1} {album.name} — {album.artist}
+              #{i + 1} {album.name}
             </div>
           )}
         />
