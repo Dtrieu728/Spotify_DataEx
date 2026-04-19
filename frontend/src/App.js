@@ -89,7 +89,6 @@ function App() {
 
       songs.forEach((track) => {
         const albumName = track.album;
-        const albumArtist = track.artist;
         if (!albumName) return;
 
            albumMap[albumName] = (albumMap[albumName] || 0) + 1;
