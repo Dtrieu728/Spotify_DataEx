@@ -128,7 +128,7 @@ const releaseYearData = useMemo(() => {
 
         <div style={{ maxWidth: 900, margin: "0 auto", height: 400 }}>
           <h2>Release Year Trends</h2>
-          <Line
+          <Bar
             data={releaseYearData}
             options={{
               responsive: true,
