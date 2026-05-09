@@ -10,9 +10,11 @@ load_dotenv(override=True)
 
 def get_spotify_client():
     return spotipy.Spotify(auth_manager=SpotifyOAuth(
-        client_id=os.getenv("REACT_APP_CLIENT_ID"),
-        client_secret=os.getenv("REACT_APP_CLIENT_SECRET"),
-        redirect_uri=os.getenv("REACT_APP_REDIRECT_URI"),
+        # client_id=os.getenv("REACT_APP_CLIENT_ID"),
+        client_id="2e86f941f1a147628f1f4077fc83365b",
+        # client_secret=os.getenv("REACT_APP_CLIENT_SECRET"),
+        client_secret="05afe3942c30492e8630536c0d71b3bc",
+        redirect_uri="http://127.0.0.1:5000/",
         scope="user-library-read user-top-read playlist-read-private",
         cache_path=".spotifycache"
     ))
@@ -175,3 +177,4 @@ def get_song_data(sp, limit=20):
     conn.commit()
     conn.close()
     return results
+
