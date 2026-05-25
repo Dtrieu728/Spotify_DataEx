@@ -9,20 +9,21 @@ load_dotenv(override=True)
 
 DB_PATH = "Database/spotify.db"
 _sp = None
+_user_id = None
 
 
 def get_spotify_client():
-    global _sp
+    global _sp, _user_id
     if _sp is None:
         _sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
             client_id=os.getenv("SPOTIPY_CLIENT_ID"),
             client_secret=os.getenv("SPOTIPY_CLIENT_SECRET"),
-            redirect_uri="http://127.0.0.1:5000/callback",
-            # redirect_uri=os.getenv("SPOTIPY_REDIRECT_URI"),
+            redirect_uri=os.getenv("SPOTIPY_REDIRECT_URI"),
             scope="user-library-read user-top-read playlist-read-private",
             cache_path=".spotifycache",
         ))
-    return _sp
+        _user_id = _sp.current_user()['id']
+    return _sp, _user_id
 
 
 @contextmanager
@@ -39,6 +40,7 @@ def get_db():
 
 
 def create_tables():
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     with get_db() as conn:
         c = conn.cursor()
         c.execute("""
@@ -63,11 +65,15 @@ def create_tables():
         """)
 
 
-def get_song_data(sp, limit=20):
-    user_id = sp.current_user()['id']
-    tracks = sp.current_user_top_tracks(limit=limit)['items']
+def get_song_data(sp, user_id, limit=20):
+    response = sp.current_user_top_tracks(limit=limit)
+    tracks = response.get('items')
+    if not tracks:
+        return [], []
 
-    results = []
+    song_results = []
+    album_results = []
+
     with get_db() as conn:
         c = conn.cursor()
         for t in tracks:
@@ -75,43 +81,49 @@ def get_song_data(sp, limit=20):
             album = t['album']['name']
             release_date = t['album']['release_date']
             duration_ms = t['duration_ms']
+
             c.execute("""
-                INSERT OR REPLACE INTO top_songs
+                INSERT INTO top_songs
                 (user_id, song_name, artist_name, album_name, release_date, duration_ms, fetched_at)
                 VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
+                ON CONFLICT(user_id, song_name, artist_name)
+                DO UPDATE SET album_name=excluded.album_name,
+                              release_date=excluded.release_date,
+                              duration_ms=excluded.duration_ms,
+                              fetched_at=datetime('now')
             """, (user_id, t['name'], artists, album, release_date, duration_ms))
-            results.append({
+            song_results.append({
                 "name": t['name'], "artist": artists,
                 "album": album, "release_date": release_date, "duration_ms": duration_ms,
             })
-    return results
+
+            # Derive albums from the same track list — no extra API call
+            album_artists = ", ".join(a['name'] for a in t['album']['artists'])
+            c.execute("""
+                INSERT INTO top_albums (user_id, album_name, artist_name, fetched_at)
+                VALUES (?, ?, ?, datetime('now'))
+                ON CONFLICT(user_id, album_name, artist_name)
+                DO UPDATE SET fetched_at=datetime('now')
+            """, (user_id, album, album_artists))
+            album_results.append({"name": album, "artist": album_artists})
+
+    return song_results, album_results
 
 
-def get_top_artists(sp, limit=20):
-    user_id = sp.current_user()['id']
-    artists = sp.current_user_top_artists(limit=limit)['items']
+def get_top_artists(sp, user_id, limit=20):
+    response = sp.current_user_top_artists(limit=limit)
+    artists = response.get('items')
+    if not artists:
+        return []
 
     with get_db() as conn:
         c = conn.cursor()
         for a in artists:
             c.execute("""
-                INSERT OR IGNORE INTO top_artists (user_id, artist_name, fetched_at)
+                INSERT INTO top_artists (user_id, artist_name, fetched_at)
                 VALUES (?, ?, datetime('now'))
+                ON CONFLICT(user_id, artist_name)
+                DO UPDATE SET fetched_at=datetime('now')
             """, (user_id, a['name']))
+
     return [{"name": a['name']} for a in artists]
-
-
-def get_top_albums(sp, limit=20):
-    user_id = sp.current_user()['id']
-    tracks = sp.current_user_top_tracks(limit=limit)['items']
-
-    with get_db() as conn:
-        c = conn.cursor()
-        for t in tracks:
-            album = t['album']
-            artists = ", ".join(a['name'] for a in album['artists'])
-            c.execute("""
-                INSERT OR IGNORE INTO top_albums (user_id, album_name, artist_name, fetched_at)
-                VALUES (?, ?, ?, datetime('now'))
-            """, (user_id, album['name'], artists))
-    return [{"name": t['album']['name'], "artist": ", ".join(a['name'] for a in t['album']['artists'])} for t in tracks]
