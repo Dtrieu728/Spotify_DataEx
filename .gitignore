@@ -1,5 +1,5 @@
 scripts/ 
-myenv/
+.myenv/
 .env
 .cache
 __pycache__/

@@ -1,28 +1,30 @@
-import { Link } from 'react-router-dom';
-import './NavigationBar.css'; 
-import { HOME,PROFILE, USERPAGE } from "../../Constants/routes";
+import { NavLink } from 'react-router-dom';
+import { HOME, PROFILE, USERPAGE, PLAYLISTS, ABOUT } from '../../Constants/routes';
+import './NavigationBar.css';
 
+const NAV_LINKS = [
+  { to: HOME,      label: 'Home'      },
+  { to: PROFILE,   label: 'Profile'   },
+  { to: USERPAGE,  label: 'Data'      },
+  { to: PLAYLISTS, label: 'Playlists' },
+  { to: ABOUT,     label: 'About'  },
+];
 
 function NavigationBar() {
   return (
-    <header className='NavigationBar'>
-      <nav>
-        <ul className='nav-list'>
-          <li className='nav-item'>
-            <Link to={HOME}>Home</Link>
-          </li>
-          <li className='nav-item'>
-            <Link to={PROFILE }>Profile</Link>
-          </li>
-          <li className='nav-item'>
-            <Link to={USERPAGE}>Data</Link>
-          </li>
-          {/* <li className='nav-item'>
-            <Link to={PLAYLISTS}>Playlists</Link>
-          </li>
-          <li className='nav-item'>
-            <Link to={INSIGHTS}>Insights</Link>
-          </li> */}
+    <header className="NavigationBar">
+      <nav aria-label="Main navigation">
+        <ul className="nav-list">
+          {NAV_LINKS.map(({ to, label }) => (
+            <li key={to} className="nav-item">
+              <NavLink
+                to={to}
+                className={({ isActive }) => isActive ? 'active' : undefined}
+              >
+                {label}
+              </NavLink>
+            </li>
+          ))}
         </ul>
       </nav>
     </header>

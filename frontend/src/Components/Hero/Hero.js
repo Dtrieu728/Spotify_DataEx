@@ -1,10 +1,8 @@
 import React from "react";
 import "./Hero.css";
 import { login } from "../Login/auth";
-import { useNavigate} from "react-router-dom";
 
 const Hero = () => {
-  const navigate = useNavigate();
   return (
     <div className="Hero">
       <h1>Looking for music?</h1>
@@ -13,9 +11,6 @@ const Hero = () => {
         <p>Explore your top songs, artists, and albums in one place.</p>
         <button onClick={login} className="hero-btn">
               Login with Spotify
-        </button>
-        <button className="hero-btn" onClick={() => navigate("/Profile")}>
-          Get Started
         </button>
       </div>
     </div>
