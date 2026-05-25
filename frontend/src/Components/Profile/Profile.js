@@ -14,7 +14,7 @@ const truncate = (str, max = 18) =>
 const barOptions = (title) => ({
   responsive: true,
   maintainAspectRatio: false,
-  indexAxis: "y",
+  indexAxis: "x",
   plugins: {
     title: { display: true, text: title, font: { size: 16 } },
     legend: { display: false },
