@@ -35,7 +35,7 @@ def update_spotify_data():
     get_top_artists_for_user(sp)
     get_top_albums_for_user(sp)
 
-    # Update audio features safely
+
     try:
         get_song_data(sp)
     except Exception as e:
